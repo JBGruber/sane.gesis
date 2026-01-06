@@ -22,7 +22,7 @@ You can install the development version of sane.gesis from GitHub:
 
 ``` r
 # install.packages("remotes")
-remotes::install_gitlab("JBGruber/sane.gesis", host = "git.gesis.org")
+remotes::install_github("JBGruber/sane.gesis")
 ```
 
 ## Usage
