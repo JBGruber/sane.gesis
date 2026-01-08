@@ -4,11 +4,11 @@
 \alias{export_install_script}
 \title{Export Installation Script for Offline Use}
 \usage{
-export_install_script(dest_file = "install_from_minicran.r", overwrite = FALSE)
+export_install_script(dest_file = "install_minicran.r", overwrite = FALSE)
 }
 \arguments{
 \item{dest_file}{Character string specifying where to save the script.
-Default is \code{"install_from_minicran.r"} in the current directory.}
+Default is \code{"install_minicran.r"} in the current directory.}
 
 \item{overwrite}{Logical indicating whether to overwrite existing files.
 Default is \code{FALSE}.}
@@ -24,7 +24,7 @@ be transferred to machines without the sane.gesis package installed.
 This function extracts the bundled installation script from the package
 installation directory and copies it to a location where it can be easily
 transferred to offline machines. The script contains the \code{install_minicran()}
-and \code{install_from_minicran()} functions as standalone code that can be
+and \code{install_minicran()} functions as standalone code that can be
 sourced on systems without the package installed.
 
 The typical workflow is:
@@ -32,7 +32,7 @@ The typical workflow is:
 \item On a machine with internet and sane.gesis installed, run
 \code{export_install_script()} to get the script file
 \item Transfer both the script and the miniCRAN zip file to the offline machine
-\item On the offline machine, run \code{source("install_from_minicran.r")}
+\item On the offline machine, run \code{source("install_minicran.r")}
 followed by \code{install_minicran()}
 }
 }
@@ -42,7 +42,7 @@ followed by \code{install_minicran()}
 export_install_script()
 
 # Export to a specific location
-export_install_script("S:/software/install_from_minicran.r")
+export_install_script("S:/software/install_minicran.r")
 
 # Overwrite existing file
 export_install_script(overwrite = TRUE)
@@ -50,7 +50,7 @@ export_install_script(overwrite = TRUE)
 
 }
 \seealso{
-\code{\link{build_minicran_repo}} for creating the miniCRAN repository
+\code{\link{build_local_repo}} for creating the miniCRAN repository
 
 \code{\link{install_minicran}} for the installation function
 }

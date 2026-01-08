@@ -29,13 +29,13 @@ remotes::install_github("JBGruber/sane.gesis")
 
 ### Creating a miniCRAN Repository
 
-Use `build_minicran_repo()` to scan your project directory and create a compressed repository:
+Use `build_local_repo()` to scan your project directory and create a compressed repository:
 
 ``` r
 library(sane.gesis)
 
 # Create a repository with Windows binaries for R 4.3
-build_minicran_repo(
+build_local_repo(
   path = "."
 )
 ```
@@ -71,8 +71,8 @@ If you have an uncompressed miniCRAN repository at a fixed location:
 
 ``` r
 # Install specific packages
-install_from_minicran("dplyr")
-install_from_minicran(c("ggplot2", "tidyr", "readr"))
+install_minicran(pkgs = "dplyr")
+install_minicran(pkgs = c("ggplot2", "tidyr", "readr"))
 ```
 
 Note: This function expects the repository to be at `file:///S:/software/miniCRAN` by default.
@@ -87,7 +87,7 @@ Note: This function expects the repository to be at `file:///S:/software/miniCRA
 library(sane.gesis)
 
 # Create the package repository
-build_minicran_repo(path = ".")
+build_local_repo(path = ".")
 
 # Export the installation script
 export_install_script()
@@ -95,14 +95,14 @@ export_install_script()
 
 2. Transfer both files to the *SANE Data Provider Portal* machine:
    - `mincran_repo.zip` (the package repository)
-   - `install_from_minicran.r` (the installation script)
+   - `install_minicran.r` (the installation script)
 
 ### On the SANE Tinker Device
 
 3. Access the SANE tinker device and run:
 
 ``` r
-source('S:/software/install_from_minicran.r')
+source('S:/software/install_minicran.r')
 install_minicran()
 ```
 

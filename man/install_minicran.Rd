@@ -4,11 +4,18 @@
 \alias{install_minicran}
 \title{Install All Packages from a Compressed miniCRAN Repository}
 \usage{
-install_minicran(minicran = "S:/software/mincran_repo.zip", verbose = TRUE)
+install_minicran(
+  minicran = "S:/software/mincran_repo.zip",
+  pkgs = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{minicran}{Character string specifying the path to the compressed
 miniCRAN repository zip file. Default is \code{"S:/software/mincran_repo.zip"}.}
+
+\item{pkgs}{Character vector of packages to install (caution: the function does
+not check dependencies).}
 
 \item{verbose}{Logical indicating whether to display installation progress.
 Default is \code{TRUE}.}
@@ -51,7 +58,7 @@ install_minicran(verbose = FALSE)
 
 }
 \seealso{
-\code{\link{build_minicran_repo}} for creating miniCRAN repositories
+\code{\link{build_local_repo}} for creating miniCRAN repositories
 
-\code{\link{install_from_minicran}} for installing specific packages
+\code{\link{install_minicran}} for installing specific packages
 }
