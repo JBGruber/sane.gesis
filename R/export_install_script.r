@@ -4,7 +4,7 @@
 #' be transferred to machines without the sane.gesis package installed.
 #'
 #' @param dest_file Character string specifying where to save the script.
-#'   Default is \code{"install_minicran.r"} in the current directory.
+#'   Default is \code{"install_portable_repo.r"} in the current directory.
 #' @param overwrite Logical indicating whether to overwrite existing files.
 #'   Default is \code{FALSE}.
 #'
@@ -13,21 +13,21 @@
 #' @details
 #' This function extracts the bundled installation script from the package
 #' installation directory and copies it to a location where it can be easily
-#' transferred to offline machines. The script contains the \code{install_minicran()}
-#' and \code{install_minicran()} functions as standalone code that can be
+#' transferred to offline machines. The script contains the \code{install_portable_repo()}
+#' and \code{install_portable_repo()} functions as standalone code that can be
 #' sourced on systems without the package installed.
 #'
 #' The typical workflow is:
 #' \enumerate{
 #'   \item On a machine with internet and sane.gesis installed, run
 #'         \code{export_install_script()} to get the script file
-#'   \item Transfer both the script and the miniCRAN zip file to the offline machine
-#'   \item On the offline machine, run \code{source("install_minicran.r")}
-#'         followed by \code{install_minicran()}
+#'   \item Transfer both the script and the portable repository zip file to the offline machine
+#'   \item On the offline machine, run \code{source("install_portable_repo.r")}
+#'         followed by \code{install_portable_repo()}
 #' }
 #'
-#' @seealso \code{\link{build_local_repo}} for creating the miniCRAN repository
-#' @seealso \code{\link{install_minicran}} for the installation function
+#' @seealso \code{\link{build_portable_repo}} for creating the portable package repository
+#' @seealso \code{\link{install_portable_repo}} for the installation function
 #'
 #' @examples
 #' \dontrun{
@@ -35,7 +35,7 @@
 #' export_install_script()
 #'
 #' # Export to a specific location
-#' export_install_script("S:/software/install_minicran.r")
+#' export_install_script("S:/software/install_portable_repo.r")
 #'
 #' # Overwrite existing file
 #' export_install_script(overwrite = TRUE)
@@ -43,12 +43,12 @@
 #'
 #' @export
 export_install_script <- function(
-  dest_file = "install_minicran.r",
+  dest_file = "install_portable_repo.r",
   overwrite = FALSE
 ) {
   script_path <- system.file(
     "scripts",
-    "install_minicran.r",
+    "install_portable_repo.r",
     package = "sane.gesis"
   )
 
@@ -74,9 +74,9 @@ export_install_script <- function(
   cli::cli_alert_info("To use on an offline machine:")
   cli::cli_div(theme = list(ol = list("margin-left" = 2)))
   cli::cli_ol(c(
-    "Copy this file and your miniCRAN zip to the target machine",
+    "Copy this file and your portable repository zip to the target machine",
     "Run: source('FILE_LOCATION')",
-    "Run: install_minicran()"
+    "Run: install_portable_repo()"
   ))
 
   invisible(dest_file)

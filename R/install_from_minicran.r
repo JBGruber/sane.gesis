@@ -1,10 +1,10 @@
-#' Install All Packages from a Compressed miniCRAN Repository
+#' Install All Packages from a Compressed Portable Repository
 #'
-#' Extracts and installs all packages from a compressed miniCRAN repository
+#' Extracts and installs all packages from a compressed portable package repository
 #' (zip file) to the user's library directory.
 #'
-#' @param minicran Character string specifying the path to the compressed
-#'   miniCRAN repository zip file. Default is \code{"S:/software/mincran_repo.zip"}.
+#' @param portable_repo Character string specifying the path to the compressed
+#'   portable package repository zip file. Default is \code{"S:/software/portable_repo.zip"}.
 #' @param pkgs Character vector of packages to install (caution: the function does
 #'   not check dependencies).
 #' @param verbose Logical indicating whether to display installation progress.
@@ -22,30 +22,30 @@
 #'   \item Skips packages that are already installed
 #' }
 #'
-#' The function expects the zip file to contain a standard miniCRAN structure
-#' with packages in \code{bin/windows/contrib/R_VERSION/} directories.
+#' The function expects the zip file to contain a standard CRAN-style repository
+#' structure with packages in \code{bin/windows/contrib/R_VERSION/} directories.
 #'
 #' @note This function is designed for Windows binary packages. It uses a
 #'   two-step unzipping process because packages themselves are zip files.
 #'
-#' @seealso \code{\link{build_local_repo}} for creating miniCRAN repositories
-#' @seealso \code{\link{install_minicran}} for installing specific packages
+#' @seealso \code{\link{build_portable_repo}} for creating portable package repositories
+#' @seealso \code{\link{install_portable_repo}} for installing specific packages
 #'
 #' @examples
 #' \dontrun{
 #' # Install from default location
-#' install_minicran()
+#' install_portable_repo()
 #'
 #' # Install from custom location
-#' install_minicran("path/to/my_packages.zip")
+#' install_portable_repo("path/to/my_packages.zip")
 #'
 #' # Install silently
-#' install_minicran(verbose = FALSE)
+#' install_portable_repo(verbose = FALSE)
 #' }
 #'
 #' @export
-install_minicran <- function(
-  minicran = "S:/software/mincran_repo.zip",
+install_portable_repo <- function(
+  portable_repo = "S:/software/portable_repo.zip",
   pkgs = NULL,
   verbose = TRUE
 ) {
@@ -55,7 +55,7 @@ install_minicran <- function(
   }
   r_version <- regmatches(libloc, regexpr("\\d+\\.\\d+$", libloc))
   contrib_path <- file.path("bin/windows/contrib", r_version)
-  zip_contents <- utils::unzip(minicran, list = TRUE)
+  zip_contents <- utils::unzip(portable_repo, list = TRUE)
 
   # Filter for package zip files in the correct R version folder
   pkg_pattern <- paste0("^", contrib_path, "/[^/]+\\.zip$")
@@ -86,7 +86,7 @@ install_minicran <- function(
       message(paste("\rInstalling package", i, "of", n_pkgs), appendLF = FALSE)
     }
     # unpack zip files to temporary location first
-    utils::unzip(minicran, files = pkg_files[i], exdir = temp_dir)
+    utils::unzip(portable_repo, files = pkg_files[i], exdir = temp_dir)
     pkg_zip_path <- file.path(temp_dir, pkg_files[i])
     # check which package is in the archive
     pkg <- utils::unzip(pkg_zip_path, list = TRUE)[1, 1]

@@ -1,8 +1,8 @@
-#' Build a miniCRAN Repository from Project Files
+#' Build a Portable Package Repository from Project Files
 #'
 #' Scans R scripts, Quarto files, and R Markdown files in a directory to detect
 #' package dependencies, downloads all required packages and their dependencies,
-#' and creates a compressed miniCRAN repository.
+#' and creates a compressed portable package repository.
 #'
 #' @param path Character string specifying the directory to scan for R files.
 #'   Default is current directory.
@@ -16,32 +16,33 @@
 #' @param r_version Character string specifying the R version for binary packages.
 #'   Default is \code{"4.3"}.
 #' @param out_file Character string specifying the output zip file name.
-#'   Default is \code{"mincran_repo.zip"}.
+#'   Default is \code{"portable_repo.zip"}.
 #' @param verbose Logical. Whether to print status to the screen.
 #'
-#' @return `plan_local_repo` returns a list of packages; `build_local_repo` invisibly returns
+#' @return `plan_portable_repo` returns a list of packages; `build_portable_repo` invisibly returns
 #'   the path to the created zip file.
 #'
 #' @details
-#' This function performs the following steps:
+#' Running the functions back to back performs the following steps:
 #' \enumerate{
 #'   \item Scans R scripts using \code{attachment::att_from_rscripts()}
 #'   \item Scans Quarto files using \code{attachment::att_from_qmds()}
 #'   \item Scans R Markdown files using \code{attachment::att_from_rmds()}
-#'   \item Resolves all package dependencies using \code{miniCRAN::pkgDep()}
-#'   \item Downloads packages to a temporary repository using \code{miniCRAN::makeRepo()}
+#'   \item Creates a package download proposal using \code{pkgdepends::new_pkg_download_proposal()}
+#'   \item Resolves all package dependencies
+#'   \item Downloads packages to a local repository cache
 #'   \item Compresses the repository into a zip file
 #' }
 #'
 #' @examples
 #' \dontrun{
-#' # Create a local repository for Windows binaries
-#' pkgs <- plan_local_repo(path = ".")
-#' build_local_repo(pkgs)
+#' # Create a portable repository for Windows binaries
+#' pkgs <- plan_portable_repo(path = ".")
+#' build_portable_repo(pkgs)
 #' }
 #'
 #' @export
-plan_local_repo <- function(
+plan_portable_repo <- function(
   path,
   add_pkgs = NULL,
   recursive = TRUE,
@@ -91,14 +92,14 @@ plan_local_repo <- function(
 }
 
 
-#' @rdname plan_local_repo
+#' @rdname plan_portable_repo
 #' @export
-build_local_repo <- function(
+build_portable_repo <- function(
   pkgs,
   platforms = "windows",
   r_version = "4.3.2",
   mirror = "https://cloud.r-project.org",
-  out_file = "mincran_repo.zip",
+  out_file = "portable_repo.zip",
   verbose = TRUE
 ) {
   # TODO: check r_version and platforms are valid
@@ -109,7 +110,7 @@ build_local_repo <- function(
       msg_done = "Downloaded {length(pkgs)} packages (including dependencies)"
     )
   }
-  dir.create(pth <- file.path(tempdir(), "miniCRAN"), showWarnings = FALSE)
+  dir.create(pth <- file.path(tempdir(), "portable_repo"), showWarnings = FALSE)
   pkgs <- pkg_download(
     pkgs,
     config = list(

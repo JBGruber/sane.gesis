@@ -1,18 +1,14 @@
 Package: sane.gesis
-Title: Create and Install From MiniCRAN Repositories for Offline Package Management
+Title: Create and Install From Portable Repositories for Offline Package Management
 Version: 0.0.0.9000
 Authors@R:
     person(given = "Johannes B.",
            family = "Gruber",
-           email = "JohannesB.Gruber@gmail.com", 
+           email = "JohannesB.Gruber@gmail.com",
            role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9177-1772"))
-Description: Provides tools for creating portable miniCRAN repositories and
-    installing packages in offline or restricted network environments.
-    Automatically detects package dependencies from R scripts, Quarto files,
-    and R Markdown documents, downloads all required packages, and bundles
-    them into a compressed repository that can be transferred and installed
-    without internet access.
+Description: Provides tools for creating portable package repositories and
+    installing packages in offline or restricted network environments (like SANE).
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
