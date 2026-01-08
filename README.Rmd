@@ -1,31 +1,36 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  eval = FALSE
+)
+```
 
 # sane.gesis
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
-Create and install from miniCRAN repositories for offline R package
-management in restricted network environments.
+Create and install from miniCRAN repositories for offline R package management in restricted network environments.
 
 ## Overview
 
-`sane.gesis` provides a streamlined workflow for managing R packages in
-environments without direct internet access. It automates the process
-of:
+`sane.gesis` provides a streamlined workflow for managing R packages in environments without direct internet access. It automates the process of:
 
-1.  Detecting package dependencies from your R scripts, Quarto, and R
-    Markdown files
-2.  Downloading all required packages and their dependencies from CRAN
-    in the correct format for SANE
-3.  Creating a compressed, portable miniCRAN repository
-4.  Installing packages from the compressed repository on machines
-    without internet access
+1. Detecting package dependencies from your R scripts, Quarto, and R Markdown files
+2. Downloading all required packages and their dependencies from CRAN in the correct format for SANE
+3. Creating a compressed, portable miniCRAN repository
+4. Installing packages from the compressed repository on machines without internet access
 
-This is particularly useful for users and admionistrators of the SecDC
-instances at SANE (Secure ANalysis Environment)
+This is particularly useful for users and admionistrators of the SecDC instances at SANE (Secure ANalysis Environment)
 
 ## Installation
 
@@ -40,10 +45,9 @@ remotes::install_github("JBGruber/sane.gesis")
 
 ### Creating a miniCRAN Repository
 
-Use `plan_local_repo()` to scan your project directory and find all
-packages that you have used in a project (and their dependencies):
+Use `plan_local_repo()` to scan your project directory and find all packages that you have used in a project (and their dependencies):
 
-``` r
+```{r example-plan, warning=FALSE}
 library(sane.gesis)
 plan_local_repo("R")
 #> ✔ Checked R scripts for packages [npkgs = 5] [153ms]
@@ -60,16 +64,14 @@ plan_local_repo("R")
 
 The function will:
 
-- Scan all R scripts, Quarto files (`.qmd`), and R Markdown files
-  (`.Rmd`) in the directory
+- Scan all R scripts, Quarto files (`.qmd`), and R Markdown files (`.Rmd`) in the directory
 - Identify all package dependencies using the `attachment` package
 - Resolve transitive dependencies using `miniCRAN`
 
-The resulting vector can be sent to the person who manages the offline
-machine and can add files. They can then build a local repository using
-`build_local_repo()`:
+The resulting vector can be sent to the person who manages the offline machine and can add files.
+They can then build a local repository using `build_local_repo()`:
 
-``` r
+```{r example-build, warning=FALSE}
 plan_local_repo("R") |>
   build_local_repo()
 #> ✔ Checked R scripts for packages [npkgs = 5] [5ms]
@@ -87,8 +89,7 @@ plan_local_repo("R") |>
 
 ### Installing from a miniCRAN Repository
 
-Once you’ve transferred the zip file to your offline system, you can
-install packages in two ways:
+Once you've transferred the zip file to your offline system, you can install packages in two ways:
 
 #### Option 1: Install All Packages from Zip Archive
 
@@ -105,8 +106,7 @@ This will:
 
 #### Option 2: Install Specific Packages from Local Repository
 
-If you do not want (re)install all packages, but only specific ones, you
-can pass a selection:
+If you do not want (re)install all packages, but only specific ones, you can pass a selection:
 
 ``` r
 # Install specific packages
@@ -114,17 +114,15 @@ install_minicran(pkgs = "dplyr")
 install_minicran(pkgs = c("ggplot2", "tidyr", "readr"))
 ```
 
-Note: This is not recommended as the function will not resolve
-dependencies, which means that your packages will likely not work (you
-can use the function to install dependencies though).
+Note: This is not recommended as the function will not resolve dependencies, which means that your packages will likely not work (you can use the function to install dependencies though).
 
 ## Workflow
 
 ### On One or Multiple Machines with Internet Access
 
-1.  Install the sane.gesis package and create a miniCRAN repository:
+1. Install the sane.gesis package and create a miniCRAN repository:
 
-``` r
+```{r example-workflow, eval=FALSE}
 library(sane.gesis)
 
 # Collect packages to install
@@ -137,29 +135,27 @@ build_local_repo(package_list)
 export_install_script()
 ```
 
-2.  Transfer both files to the *SANE Data Provider Portal* machine:
-    - `mincran_repo.zip` (the package repository)
-    - `install_minicran.r` (the installation script)
+2. Transfer both files to the *SANE Data Provider Portal* machine:
+   - `mincran_repo.zip` (the package repository)
+   - `install_minicran.r` (the installation script)
 
 ### On the SANE Tinker Device
 
-3.  Access the SANE tinker device and run:
+3. Access the SANE tinker device and run:
 
 ``` r
 source('S:/software/install_minicran.r')
 install_minicran()
 ```
 
-The `export_install_script()` function extracts the standalone
-installation script from the package, making it easy to transfer to
-machines without the package installed.
+The `export_install_script()` function extracts the standalone installation script from the package, making it easy to transfer to machines without the package installed.
+
 
 ## Technical Details
 
 ### Package Detection
 
-The package scans for dependencies using the `attachment` package, which
-recognizes:
+The package scans for dependencies using the `attachment` package, which recognizes:
 
 - `library()`, `require()` and `::` calls in R scripts
 - YAML headers and inline code in Quarto files
@@ -169,22 +165,22 @@ recognizes:
 
 The created zip file contains a standard miniCRAN structure:
 
-    bin/
-      windows/
-        contrib/
-          4.3/
-            package1_1.0.0.zip
-            package2_2.1.0.zip
-            ...
-            PACKAGES
-            PACKAGES.gz
+```
+bin/
+  windows/
+    contrib/
+      4.3/
+        package1_1.0.0.zip
+        package2_2.1.0.zip
+        ...
+        PACKAGES
+        PACKAGES.gz
+```
 
 ### Windows-Specific Design
 
-The current implementation is optimized for Windows binary packages and
-uses a two-step unzipping process (since Windows packages are themselves
-zip files) – which is ideal for SANE Tinker machines. The approach can
-be adapted for other platforms by changing the `type` parameter.
+The current implementation is optimized for Windows binary packages and uses a two-step unzipping process (since Windows packages are themselves zip files) -- which is ideal for SANE Tinker machines. 
+The approach can be adapted for other platforms by changing the `type` parameter. 
 
 ## License
 

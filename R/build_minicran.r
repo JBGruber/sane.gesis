@@ -91,7 +91,7 @@ build_local_repo <- function(
       msg_done = "Downloaded packages"
     )
   }
-  dir.create(pth <- file.path(tempdir(), "miniCRAN"))
+  dir.create(pth <- file.path(tempdir(), "miniCRAN"), showWarnings = FALSE)
 
   miniCRAN::makeRepo(
     pkgs,
@@ -104,7 +104,7 @@ build_local_repo <- function(
   if (verbose) {
     cli::cli_progress_step(
       msg = "Compressing packages",
-      msg_done = "Compressed {npkgs} packages into {.path {out_file}}"
+      msg_done = "Compressed {length(pkgs)} packages into {.path {out_file}}"
     )
   }
   zip::zip(zipfile = basename(out_file), dir(pth, recursive = TRUE), root = pth)
