@@ -7,6 +7,7 @@
 \usage{
 plan_local_repo(
   path,
+  pkgs = NULL,
   mirror = "https://cloud.r-project.org",
   recursive = TRUE,
   verbose = TRUE
@@ -25,14 +26,14 @@ build_local_repo(
 \item{path}{Character string specifying the directory to scan for R files.
 Default is current directory.}
 
+\item{pkgs}{Packages to include in plan/download.}
+
 \item{mirror}{Character string specifying the CRAN mirror to use.
 Default is \code{"https://cloud.r-project.org"}.}
 
 \item{recursive}{Logical. Whether to search for packages in a path recursivly.}
 
 \item{verbose}{Logical. Whether to print status to the screen.}
-
-\item{pkgs}{Packages to download.}
 
 \item{type}{Character string specifying the package type. Options include
 \code{"win.binary"}, \code{"mac.binary"}, or \code{"source"}.

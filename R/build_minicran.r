@@ -6,7 +6,7 @@
 #'
 #' @param path Character string specifying the directory to scan for R files.
 #'   Default is current directory.
-#' @param pkgs Packages to download.
+#' @param pkgs Packages to include in plan/download.
 #' @param mirror Character string specifying the CRAN mirror to use.
 #'   Default is \code{"https://cloud.r-project.org"}.
 #' @param recursive Logical. Whether to search for packages in a path recursivly.
@@ -43,33 +43,49 @@
 #' @export
 plan_local_repo <- function(
   path,
+  pkgs = NULL,
   mirror = "https://cloud.r-project.org",
   recursive = TRUE,
   verbose = TRUE
 ) {
-  pkgs <- character()
-  if (verbose) {
-    cli::cli_progress_step(
-      msg = "Checking R scripts for packages",
-      msg_done = "Checked R scripts for packages [npkgs = {length(pkgs)}]"
+  if (missing(path) && !is.character(pkgs)) {
+    cli::cli_abort(
+      "You need to provide either a {.code path} with R/Rmd/Qmd files or a vector of packages in {.code pkgs}."
     )
   }
-  pkgs <- attachment::att_from_rscripts(path = path, recursive = recursive)
-  if (verbose) {
-    cli::cli_progress_step(
-      msg = "Checking Quarto files for packages",
-      msg_done = "Checked Quarto files for packages [npkgs = {length(pkgs)}]"
-    )
+  if (!is.character(pkgs)) {
+    pkgs <- character()
   }
-  pkgs <- c(pkgs, attachment::att_from_qmds(path = path, recursive = recursive))
-  if (verbose) {
-    cli::cli_progress_step(
-      msg = "Checking R Markdown files for packages",
-      msg_done = "Checked R Markdown files for packages [npkgs = {length(pkgs)}]"
+  if (!missing(path)) {
+    if (verbose) {
+      cli::cli_progress_step(
+        msg = "Checking R scripts for packages",
+        msg_done = "Checked R scripts for packages [npkgs = {length(pkgs)}]"
+      )
+    }
+    pkgs <- attachment::att_from_rscripts(path = path, recursive = recursive)
+    if (verbose) {
+      cli::cli_progress_step(
+        msg = "Checking Quarto files for packages",
+        msg_done = "Checked Quarto files for packages [npkgs = {length(pkgs)}]"
+      )
+    }
+    pkgs <- c(
+      pkgs,
+      attachment::att_from_qmds(path = path, recursive = recursive)
     )
+    if (verbose) {
+      cli::cli_progress_step(
+        msg = "Checking R Markdown files for packages",
+        msg_done = "Checked R Markdown files for packages [npkgs = {length(pkgs)}]"
+      )
+    }
+    pkgs <- c(
+      pkgs,
+      attachment::att_from_rmds(path = path, recursive = recursive)
+    )
+    cli::cli_process_done()
   }
-  pkgs <- c(pkgs, attachment::att_from_rmds(path = path, recursive = recursive))
-  cli::cli_process_done()
   pkgs <- pkgs_deps(pkgs, mirror = mirror, verbose = verbose)
   return(pkgs)
 }
