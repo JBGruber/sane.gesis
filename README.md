@@ -45,7 +45,7 @@ packages that you have used in a project (and their dependencies):
 
 ``` r
 library(sane.gesis)
-plan_local_repo("R")
+plan_local_repo(".")
 #> ✔ Checked R scripts for packages [npkgs = 5] [153ms]
 #> ✔ Checked Quarto files for packages [npkgs = 5] [23ms]
 #> ✔ Checked R Markdown files for packages [npkgs = 5] [9ms]
@@ -70,7 +70,7 @@ machine and can add files. They can then build a local repository using
 `build_local_repo()`:
 
 ``` r
-plan_local_repo("R") |>
+plan_local_repo(".") |>
   build_local_repo()
 #> ✔ Checked R scripts for packages [npkgs = 5] [5ms]
 #> ✔ Checked Quarto files for packages [npkgs = 5] [7ms]

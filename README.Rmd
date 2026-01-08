@@ -49,7 +49,7 @@ Use `plan_local_repo()` to scan your project directory and find all packages tha
 
 ```{r example-plan, warning=FALSE}
 library(sane.gesis)
-plan_local_repo("R")
+plan_local_repo(".")
 #> ✔ Checked R scripts for packages [npkgs = 5] [153ms]
 #> ✔ Checked Quarto files for packages [npkgs = 5] [23ms]
 #> ✔ Checked R Markdown files for packages [npkgs = 5] [9ms]
@@ -72,7 +72,7 @@ The resulting vector can be sent to the person who manages the offline machine a
 They can then build a local repository using `build_local_repo()`:
 
 ```{r example-build, warning=FALSE}
-plan_local_repo("R") |>
+plan_local_repo(".") |>
   build_local_repo()
 #> ✔ Checked R scripts for packages [npkgs = 5] [5ms]
 #> ✔ Checked Quarto files for packages [npkgs = 5] [7ms]
