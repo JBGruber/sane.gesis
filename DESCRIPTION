@@ -20,7 +20,7 @@ RoxygenNote: 7.3.3
 Imports:
     attachment,
     cli,
-    miniCRAN,
+    pkgdepends,
     utils,
     zip
 Suggests:

@@ -5,19 +5,13 @@
 \alias{build_local_repo}
 \title{Build a miniCRAN Repository from Project Files}
 \usage{
-plan_local_repo(
-  path,
-  pkgs = NULL,
-  mirror = "https://cloud.r-project.org",
-  recursive = TRUE,
-  verbose = TRUE
-)
+plan_local_repo(path, add_pkgs = NULL, recursive = TRUE, verbose = TRUE)
 
 build_local_repo(
   pkgs,
+  platforms = "windows",
+  r_version = "4.3.2",
   mirror = "https://cloud.r-project.org",
-  type = "win.binary",
-  r_version = "4.3",
   out_file = "mincran_repo.zip",
   verbose = TRUE
 )
@@ -26,21 +20,22 @@ build_local_repo(
 \item{path}{Character string specifying the directory to scan for R files.
 Default is current directory.}
 
-\item{pkgs}{Packages to include in plan/download.}
-
-\item{mirror}{Character string specifying the CRAN mirror to use.
-Default is \code{"https://cloud.r-project.org"}.}
+\item{add_pkgs}{Additional packages to include.}
 
 \item{recursive}{Logical. Whether to search for packages in a path recursivly.}
 
 \item{verbose}{Logical. Whether to print status to the screen.}
 
-\item{type}{Character string specifying the package type. Options include
-\code{"win.binary"}, \code{"mac.binary"}, or \code{"source"}.
-Default is \code{"win.binary"}.}
+\item{pkgs}{Packages to download.}
+
+\item{platforms}{Character string specifying the package platforms. See
+\link[pkgdepends:default_platforms]{pkgdepends::current_r_platform} for options.}
 
 \item{r_version}{Character string specifying the R version for binary packages.
 Default is \code{"4.3"}.}
+
+\item{mirror}{Character string specifying the CRAN mirror to use.
+Default is \code{"https://cloud.r-project.org"}.}
 
 \item{out_file}{Character string specifying the output zip file name.
 Default is \code{"mincran_repo.zip"}.}

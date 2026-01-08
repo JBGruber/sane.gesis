@@ -6,13 +6,13 @@
 #'
 #' @param path Character string specifying the directory to scan for R files.
 #'   Default is current directory.
-#' @param pkgs Packages to include in plan/download.
+#' @param pkgs Packages to download.
+#' @param add_pkgs Additional packages to include.
 #' @param mirror Character string specifying the CRAN mirror to use.
 #'   Default is \code{"https://cloud.r-project.org"}.
 #' @param recursive Logical. Whether to search for packages in a path recursivly.
-#' @param type Character string specifying the package type. Options include
-#'   \code{"win.binary"}, \code{"mac.binary"}, or \code{"source"}.
-#'   Default is \code{"win.binary"}.
+#' @param platforms Character string specifying the package platforms. See
+#'   [pkgdepends::current_r_platform] for options.
 #' @param r_version Character string specifying the R version for binary packages.
 #'   Default is \code{"4.3"}.
 #' @param out_file Character string specifying the output zip file name.
@@ -43,18 +43,19 @@
 #' @export
 plan_local_repo <- function(
   path,
-  pkgs = NULL,
-  mirror = "https://cloud.r-project.org",
+  add_pkgs = NULL,
   recursive = TRUE,
   verbose = TRUE
 ) {
-  if (missing(path) && !is.character(pkgs)) {
+  if (missing(path) && !is.character(add_pkgs)) {
     cli::cli_abort(
-      "You need to provide either a {.code path} with R/Rmd/Qmd files or a vector of packages in {.code pkgs}."
+      "You need to provide either a {.code path} with R/Rmd/Qmd files or a vector of packages in {.code add_pkgs}."
     )
   }
-  if (!is.character(pkgs)) {
+  if (!is.character(add_pkgs)) {
     pkgs <- character()
+  } else {
+    pkgs <- add_pkgs
   }
   if (!missing(path)) {
     if (verbose) {
@@ -86,7 +87,6 @@ plan_local_repo <- function(
     )
     cli::cli_process_done()
   }
-  pkgs <- pkgs_deps(pkgs, mirror = mirror, verbose = verbose)
   return(pkgs)
 }
 
@@ -95,28 +95,32 @@ plan_local_repo <- function(
 #' @export
 build_local_repo <- function(
   pkgs,
+  platforms = "windows",
+  r_version = "4.3.2",
   mirror = "https://cloud.r-project.org",
-  type = "win.binary",
-  r_version = "4.3",
   out_file = "mincran_repo.zip",
   verbose = TRUE
 ) {
+  # TODO: check r_version and platforms are valid
+
   if (verbose) {
     cli::cli_progress_step(
-      msg = "Downloading {length(pkgs)} packages",
-      msg_done = "Downloaded packages"
+      msg = "Downloading {length(pkgs)} packages plus dependencies",
+      msg_done = "Downloaded {length(pkgs)} packages (including dependencies)"
     )
   }
   dir.create(pth <- file.path(tempdir(), "miniCRAN"), showWarnings = FALSE)
-
-  miniCRAN::makeRepo(
+  pkgs <- pkg_download(
     pkgs,
-    path = pth,
-    repos = mirror,
-    type = type,
-    Rversion = r_version,
-    quiet = TRUE
+    config = list(
+      cache_dir = pth,
+      platforms = platforms,
+      `r-versions` = r_version,
+      cran_mirror = mirror,
+      dependencies = c("Imports", "Depends", "LinkingTo", "Suggests")
+    )
   )
+
   if (verbose) {
     cli::cli_progress_step(
       msg = "Compressing packages",
@@ -129,23 +133,18 @@ build_local_repo <- function(
 }
 
 
-pkgs_deps <- function(pkgs, mirror, verbose = TRUE) {
-  if (verbose) {
-    cli::cli_progress_step(
-      msg = "Querying for package dependencies",
-      msg_done = "Queried for package dependencies [npkgs = {length(pkgs)}]"
+pkg_download <- function(pkgs, config) {
+  dl <- pkgdepends::new_pkg_download_proposal(refs = pkgs, config = config)
+  dl$resolve()
+  solution <- dl$get_resolution()
+  if (any(solution$status == "FAILED")) {
+    cli::cli_alert_danger(
+      "Some packages had issues and will not be included: {solution$package[solution$status == 'FAILED']}"
     )
+    pkgs <- solution$ref[solution$status == "OK"]
+    config$dependencies <- FALSE
+    dl <- pkgdepends::new_pkg_download_proposal(refs = pkgs, config = config)
   }
-  # miniCRAN::pkgDep does not resolve dependecies recursivly
-  npkgs <- 0
-  while (npkgs < length(pkgs)) {
-    npkgs <- length(pkgs)
-    # we do not need base packages
-    pkgs <- setdiff(pkgs, miniCRAN::basePkgs())
-    pkgs <- unique(c(
-      pkgs,
-      miniCRAN::pkgDep(pkgs, repos = c(CRAN = mirror))
-    ))
-  }
-  return(pkgs)
+  dl$download()
+  return(dl$get_downloads()$ref)
 }
