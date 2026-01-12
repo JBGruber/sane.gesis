@@ -1,8 +1,8 @@
-# Standalone script for installing from miniCRAN repositories
+# Standalone script for installing from portable repositories
 # This file can be sourced on machines without the sane.gesis package installed
 
-install_minicran <- function(
-  minicran = "S:/software/mincran_repo.zip",
+install_portable_repo <- function(
+  portable_repo = "S:/software/portable_repo.zip",
   pkgs = NULL,
   verbose = TRUE
 ) {
@@ -12,7 +12,7 @@ install_minicran <- function(
   }
   r_version <- regmatches(libloc, regexpr("\\d+\\.\\d+$", libloc))
   contrib_path <- file.path("bin/windows/contrib", r_version)
-  zip_contents <- utils::unzip(minicran, list = TRUE)
+  zip_contents <- utils::unzip(portable_repo, list = TRUE)
 
   # Filter for package zip files in the correct R version folder
   pkg_pattern <- paste0("^", contrib_path, "/[^/]+\\.zip$")
@@ -43,7 +43,7 @@ install_minicran <- function(
       message(paste("\rInstalling package", i, "of", n_pkgs), appendLF = FALSE)
     }
     # unpack zip files to temporary location first
-    utils::unzip(minicran, files = pkg_files[i], exdir = temp_dir)
+    utils::unzip(portable_repo, files = pkg_files[i], exdir = temp_dir)
     pkg_zip_path <- file.path(temp_dir, pkg_files[i])
     # check which package is in the archive
     pkg <- utils::unzip(pkg_zip_path, list = TRUE)[1, 1]
