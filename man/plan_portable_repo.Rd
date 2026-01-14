@@ -5,7 +5,13 @@
 \alias{build_portable_repo}
 \title{Build a Portable Package Repository from Project Files}
 \usage{
-plan_portable_repo(path, add_pkgs = NULL, recursive = TRUE, verbose = TRUE)
+plan_portable_repo(
+  path,
+  add_pkgs = NULL,
+  recursive = TRUE,
+  write_requirements = "ask",
+  verbose = TRUE
+)
 
 build_portable_repo(
   pkgs,
@@ -23,6 +29,9 @@ Default is current directory.}
 \item{add_pkgs}{Additional packages to include.}
 
 \item{recursive}{Logical. Whether to search for packages in a path recursivly.}
+
+\item{write_requirements}{should the function write package dependencies into
+a txt file? Possible ansers: \code{TRUE}/\code{FALSE}/\code{"ask"}-`}
 
 \item{verbose}{Logical. Whether to print status to the screen.}
 

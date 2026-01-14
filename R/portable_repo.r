@@ -17,6 +17,8 @@
 #'   Default is \code{"4.3"}.
 #' @param out_file Character string specifying the output zip file name.
 #'   Default is \code{"portable_repo.zip"}.
+#' @param write_requirements should the function write package dependencies into
+#'   a txt file? Possible ansers: `TRUE`/`FALSE`/`"ask"`-`
 #' @param verbose Logical. Whether to print status to the screen.
 #'
 #' @return `plan_portable_repo` returns a list of packages; `build_portable_repo` invisibly returns
@@ -46,6 +48,7 @@ plan_portable_repo <- function(
   path,
   add_pkgs = NULL,
   recursive = TRUE,
+  write_requirements = "ask",
   verbose = TRUE
 ) {
   if (missing(path) && !is.character(add_pkgs)) {
@@ -88,6 +91,15 @@ plan_portable_repo <- function(
     )
     cli::cli_process_done()
   }
+  if (write_requirements == "ask") {
+    write_requirements <- askYesNo(
+      "Do you want to export a requirements.txt file?"
+    )
+  }
+  if (isTRUE(write_requirements)) {
+    writeLines(pkgs, "requirements.txt")
+  }
+
   return(pkgs)
 }
 
