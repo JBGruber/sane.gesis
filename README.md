@@ -24,8 +24,8 @@ of:
 4.  Installing packages from the compressed repository on machines
     without internet access
 
-This is particularly useful for users and admionistrators of the SecDC
-instances at SANE (Secure ANalysis Environment)
+This is particularly useful for users and administrators of the Secure Data Center (SecDC)
+instances at SANE (Secure ANalysis Environment).
 
 ## Installation
 
@@ -41,9 +41,9 @@ remotes::install_github("JBGruber/sane.gesis")
 ### Creating a Portable Package Repository
 
 Use `plan_portable_repo()` to scan your project directory and find all
-packages that you have used in a project (and their dependencies). As
-example, we run in on the folder R, to do the same for the current
-working directory, you can run `plan_portable_repo(".")`:
+packages that you have used in a project (and their dependencies). As an
+example, we run in on the folder R. To do the same for the current
+working directory you are working in, you can run `plan_portable_repo(".")`.
 
 ``` r
 library(sane.gesis)
@@ -68,9 +68,10 @@ The function will:
 - Identify all package dependencies using the `attachment` package
 - Resolve transitive dependencies using `pkgdepends`
 
-The resulting vector can be sent to the person who manages the offline
+After running this code, you will be automatically asked whether you want to export a "requirements.txt" file. Please select "Yes", which will create the file "requirements.txt" in your working directory. This file contains the names of all the packages that were found by `plan_portable_repo(".")`. This document can be sent to the person who manages the offline
 machine and can add files. They can then build a portable repository
-using `build_portable_repo()`:
+using `build_portable_repo()`. That means you don't have to run the
+following chunk of code yourself -- the person working at the Secure Data Center will do that:
 
 ``` r
 plan_portable_repo("R") |>
@@ -95,75 +96,6 @@ plan_portable_repo("R") |>
 - Create a compressed zip file containing the complete repository
 - The package defaults reflect the system that SANE is currently running
 
-### Installing from a Portable Package Repository
-
-Once you’ve transferred the zip file to your offline system, you can
-install packages in two ways:
-
-#### Option 1: Install All Packages from Zip Archive
-
-``` r
-# Install all packages from the compressed repository
-install_portable_repo()
-```
-
-This will:
-
-- Extract packages to your user library directory
-- Skip packages that are already installed
-- Display progress as packages are installed
-
-#### Option 2: Install Specific Packages from Local Repository
-
-If you do not want (re)install all packages, but only specific ones, you
-can pass a selection:
-
-``` r
-# Install specific packages
-install_portable_repo(pkgs = "dplyr")
-install_portable_repo(pkgs = c("ggplot2", "tidyr", "readr"))
-```
-
-Note: This is not recommended as the function will not resolve
-dependencies, which means that your packages will likely not work (you
-can use the function to install dependencies though).
-
-## Workflow
-
-### On One or Multiple Machines with Internet Access
-
-1.  Install the sane.gesis package and create a portable package
-    repository:
-
-``` r
-library(sane.gesis)
-
-# Collect packages to install
-package_list <- plan_portable_repo(".")
-
-# Create the package repository (this can happen on a different machine)
-build_portable_repo(package_list)
-
-# Export the installation script
-export_install_script()
-```
-
-2.  Transfer both files to the *SANE Data Provider Portal* machine:
-    - `portable_repo.zip` (the package repository)
-    - `install_portable_repo.r` (the installation script)
-
-### On the SANE Tinker Device
-
-3.  Access the SANE tinker device and run:
-
-``` r
-source('S:/software/install_portable_repo.r')
-install_portable_repo()
-```
-
-The `export_install_script()` function extracts the standalone
-installation script from the package, making it easy to transfer to
-machines without the package installed.
 
 ## Technical Details
 
