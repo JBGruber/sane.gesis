@@ -123,7 +123,7 @@ build_portable_repo <- function(
     )
   }
   dir.create(pth <- file.path(tempdir(), "portable_repo"), showWarnings = FALSE)
-  pkgs <- pkg_download(
+  pkgs_loaded <- pkg_download(
     pkgs,
     config = list(
       cache_dir = pth,
@@ -133,6 +133,16 @@ build_portable_repo <- function(
       dependencies = c("Imports", "Depends", "LinkingTo", "Suggests")
     )
   )
+
+  pkgs_missing <- setdiff(pkgs, pkgs_loaded)
+  if (length(pkgs_missing) > 0L) {
+    pkg_builder(
+      pkgs_missing,
+      pth,
+      r_version = r_version,
+      mirror = mirror
+    )
+  }
 
   if (verbose) {
     cli::cli_progress_step(
