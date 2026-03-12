@@ -123,7 +123,7 @@ build_portable_repo <- function(
     )
   }
   dir.create(pth <- file.path(tempdir(), "portable_repo"), showWarnings = FALSE)
-  pkgs_loaded <- pkg_download(
+  pkgs <- pkg_download(
     pkgs,
     config = list(
       cache_dir = pth,
@@ -133,16 +133,6 @@ build_portable_repo <- function(
       dependencies = c("Imports", "Depends", "LinkingTo", "Suggests")
     )
   )
-
-  pkgs_missing <- setdiff(pkgs, pkgs_loaded)
-  if (length(pkgs_missing) > 0L) {
-    pkg_builder(
-      pkgs_missing,
-      pth,
-      r_version = r_version,
-      mirror = mirror
-    )
-  }
 
   if (verbose) {
     cli::cli_progress_step(
@@ -157,17 +147,35 @@ build_portable_repo <- function(
 
 
 pkg_download <- function(pkgs, config) {
-  dl <- pkgdepends::new_pkg_download_proposal(refs = pkgs, config = config)
+  # first collect source packages to make sure all dependencies are there
+  source_config <- config
+  source_config$platforms <- "source"
+  # then try to get all binaries
+  all_pkgs <- pkgdepends::new_pkg_download_proposal(
+    refs = pkgs,
+    config = config
+  )
+  all_pkgs$resolve()
+  dl <- pkgdepends::new_pkg_download_proposal(
+    refs = all_pkgs$get_resolution()$ref,
+    config = config
+  )
   dl$resolve()
   solution <- dl$get_resolution()
+  # if not all packages have binaries, build them
+  pkgs_built <- c()
   if (any(solution$status == "FAILED")) {
-    cli::cli_alert_danger(
-      "Some packages had issues and will not be included: {solution$package[solution$status == 'FAILED']}"
+    pkgs2build <- solution$ref[solution$status == "FAILED"]
+    pkgs_built <- pkg_builder(
+      pkgs2build,
+      pth = config$cache_dir,
+      r_version = config$`r-versions`,
+      mirror = config$cran_mirror
     )
     pkgs <- solution$ref[solution$status == "OK"]
     config$dependencies <- FALSE
     dl <- pkgdepends::new_pkg_download_proposal(refs = pkgs, config = config)
   }
   dl$download()
-  return(dl$get_downloads()$ref)
+  return(c(dl$get_downloads()$ref, pkgs_built))
 }

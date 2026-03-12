@@ -39,10 +39,10 @@ pkg_builder <- function(
   r_minor <- paste(numeric_version(r_version)[1L, 1:2], collapse = ".")
   bin_dir <- file.path(pth, "bin", "windows", "contrib", r_minor)
   dir.create(bin_dir, showWarnings = FALSE, recursive = TRUE)
-
+  pkg_out <- 0
   for (f in source_files) {
     if (pkg_needs_compilation(f)) {
-      cli::cli_abort(
+      cli::cli_alert_danger(
         "{basename(f)} requires compilation. This cannot be done yet"
       )
     } else {
@@ -51,10 +51,11 @@ pkg_builder <- function(
         msg_done = "Built Windows binary for {basename(f)}"
       )
       build_windows_binary(f, bin_dir)
+      pkg_out <- pkg_out + 1
     }
   }
 
-  invisible(bin_dir)
+  invisible(pkg_out)
 }
 
 
