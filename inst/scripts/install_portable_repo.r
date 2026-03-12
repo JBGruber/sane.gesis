@@ -54,4 +54,7 @@ install_portable_repo <- function(
     # then unpack to lib location
     utils::unzip(pkg_zip_path, exdir = libloc)
   }
+  message(
+    "All packages installed succesfully! Note: You need to restart R now, before you can use them."
+  )
 }
