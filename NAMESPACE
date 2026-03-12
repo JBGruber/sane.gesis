@@ -3,4 +3,5 @@
 export(build_portable_repo)
 export(export_install_script)
 export(install_portable_repo)
+export(pkg_builder)
 export(plan_portable_repo)
