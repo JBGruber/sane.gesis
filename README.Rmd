@@ -30,7 +30,7 @@ Create and install from portable package repositories for offline R package mana
 3. Creating a compressed, portable package repository
 4. Installing packages from the compressed repository on machines without internet access
 
-This is particularly useful for users and admionistrators of the SecDC instances at SANE (Secure ANalysis Environment)
+This is particularly useful for users and administrators of the SecDC instances at SANE (Secure ANalysis Environment)
 
 ## Installation
 
@@ -70,8 +70,10 @@ The function will:
 - Identify all package dependencies using the `attachment` package
 - Resolve transitive dependencies using `pkgdepends`
 
-The resulting vector can be sent to the person who manages the offline machine and can add files.
-They can then build a portable repository using `build_portable_repo()`:
+After running this code, you will be automatically asked whether you want to export a "requirements.txt" file. Please select "Yes", which will create the file "requirements.txt" in your working directory. This file contains the names of all the packages that were found by `plan_portable_repo(".")`. This document can be sent to the person who manages the offline
+machine and can add files. They can then build a portable repository
+using `build_portable_repo()`. That means you don't have to run the
+following chunk of code yourself -- the person working at the Secure Data Center will do that:
 
 ```{r example-build}
 plan_portable_repo("R") |>
@@ -112,6 +114,12 @@ This will:
 - Extract packages to your user library directory
 - Skip packages that are already installed
 - Display progress as packages are installed
+
+If you want to install packages globally for all users, you can do so by specifying the global library path (as a Windows admin user):
+
+``` r
+install_portable_repo(lib = "C:/R/library")
+```
 
 #### Option 2: Install Specific Packages from Local Repository
 

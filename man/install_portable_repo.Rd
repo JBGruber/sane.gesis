@@ -7,6 +7,7 @@
 install_portable_repo(
   portable_repo = "S:/software/portable_repo.zip",
   pkgs = NULL,
+  lib = NULL,
   verbose = TRUE
 )
 }

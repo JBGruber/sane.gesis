@@ -4,13 +4,18 @@
 install_portable_repo <- function(
   portable_repo = "S:/software/portable_repo.zip",
   pkgs = NULL,
+  lib = NULL,
   verbose = TRUE
 ) {
-  libloc <- Sys.getenv("R_LIBS_USER")
+  if (is.null(lib)) {
+    libloc <- Sys.getenv("R_LIBS_USER")
+  } else {
+    libloc <- lib
+  }
   if (!dir.exists(libloc)) {
     .libPaths(new = libloc)
   }
-  r_version <- regmatches(libloc, regexpr("\\d+\\.\\d+$", libloc))
+  r_version <- paste(R.version$major, strsplit(R.version$minor, "\\.")[[1]][1], sep = ".")
   contrib_path <- file.path("bin/windows/contrib", r_version)
   zip_contents <- utils::unzip(portable_repo, list = TRUE)
 
