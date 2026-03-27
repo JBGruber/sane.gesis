@@ -18,8 +18,8 @@ pkg_builder <- function(
   source_pth <- file.path(pth, "_source_cache")
   dir.create(source_pth, showWarnings = FALSE, recursive = TRUE)
 
-  pkg_download(
-    pkgs,
+  dl <- pkgdepends::new_pkg_download_proposal(
+    refs = pkgs,
     config = list(
       cache_dir = source_pth,
       platforms = "source",
@@ -28,6 +28,8 @@ pkg_builder <- function(
       dependencies = FALSE
     )
   )
+  dl$resolve()
+  dl$download()
 
   source_files <- dir(
     source_pth,
