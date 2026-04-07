@@ -29,6 +29,25 @@ pkg_builder <- function(
     )
   )
   dl$resolve()
+  solution <- dl$get_resolution()
+
+  if (any(solution$status == "FAILED")) {
+    cli::cli_alert_danger(
+      "Some packages are not available on CRAN and will be skipped: {.code {solution$ref[solution$status == 'FAILED']}}"
+    )
+    dl <- pkgdepends::new_pkg_download_proposal(
+      refs = solution$ref[solution$status == 'OK'],
+      config = list(
+        cache_dir = source_pth,
+        platforms = "source",
+        `r-versions` = r_version,
+        cran_mirror = mirror,
+        dependencies = FALSE
+      )
+    )
+    dl$resolve()
+  }
+
   dl$download()
 
   source_files <- dir(
