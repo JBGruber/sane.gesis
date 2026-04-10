@@ -62,11 +62,7 @@ pkg_builder <- function(
   dir.create(bin_dir, showWarnings = FALSE, recursive = TRUE)
   pkg_out <- 0
   for (f in source_files) {
-    if (pkg_needs_compilation(f)) {
-      cli::cli_alert_danger(
-        "{basename(f)} requires compilation. This cannot be done yet"
-      )
-    } else {
+    if (!pkg_needs_compilation(f)) {
       cli::cli_progress_step(
         msg = "Building Windows binary for {basename(f)}",
         msg_done = "Built Windows binary for {basename(f)}"
@@ -96,7 +92,20 @@ pkg_needs_compilation <- function(tarball) {
   } # assume yes if unsure
 
   desc <- read.dcf(desc_file)
-  identical(as.character(desc[1L, "NeedsCompilation"]), "yes")
+  # special case, not available for all OS
+  if (identical(as.character(desc[1L, "OS_type"]), "unix")) {
+    cli::cli_alert_danger(
+      "{basename(f)} is a Unix-only package and cannot be included"
+    )
+    return(TRUE)
+  }
+  if (identical(as.character(desc[1L, "NeedsCompilation"]), "yes")) {
+    cli::cli_alert_danger(
+      "{basename(f)} requires compilation. This cannot be done yet"
+    )
+    return(TRUE)
+  }
+  return(FALSE)
 }
 
 
@@ -105,8 +114,8 @@ pkg_needs_compilation <- function(tarball) {
 build_windows_binary <- function(tarball, bin_dir) {
   tmp_src <- tempfile()
   tmp_lib <- tempfile()
-  dir.create(tmp_src)
-  dir.create(tmp_lib)
+  dir.create(tmp_src, recursive = TRUE)
+  dir.create(tmp_lib, recursive = TRUE)
   on.exit({
     unlink(tmp_src, recursive = TRUE)
     unlink(tmp_lib, recursive = TRUE)
