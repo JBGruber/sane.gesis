@@ -95,13 +95,13 @@ pkg_needs_compilation <- function(tarball) {
   # special case, not available for all OS
   if (identical(as.character(desc[1L, "OS_type"]), "unix")) {
     cli::cli_alert_danger(
-      "{basename(f)} is a Unix-only package and cannot be included"
+      "{basename(tarball)} is a Unix-only package and cannot be included"
     )
     return(TRUE)
   }
   if (identical(as.character(desc[1L, "NeedsCompilation"]), "yes")) {
     cli::cli_alert_danger(
-      "{basename(f)} requires compilation. This cannot be done yet"
+      "{basename(tarball)} requires compilation. This cannot be done yet"
     )
     return(TRUE)
   }
