@@ -93,7 +93,7 @@ pkg_needs_compilation <- function(tarball) {
 
   desc <- read.dcf(desc_file)
   # special case, not available for all OS
-  if (identical(as.character(desc[1L, "OS_type"]), "unix")) {
+  if (identical(as.character(try(desc[1L, "OS_type"], silent = TRUE)), "unix")) {
     cli::cli_alert_danger(
       "{basename(tarball)} is a Unix-only package and cannot be included"
     )
