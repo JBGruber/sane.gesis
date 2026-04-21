@@ -4,12 +4,7 @@
 \alias{pkg_builder}
 \title{Build or obtain Windows binaries for packages missing from CRAN}
 \usage{
-pkg_builder(
-  pkgs,
-  pth,
-  r_version = "4.3.2",
-  mirror = "https://cloud.r-project.org"
-)
+pkg_builder(pkgs, pth, r_version = "4.3.2")
 }
 \arguments{
 \item{pkgs}{Character vector of package names or refs understood by
@@ -20,8 +15,6 @@ pkg_builder(
 
 \item{r_version}{R version string, e.g. \code{"4.3.2"}. Used to select the
 correct win-builder endpoint and output directory.}
-
-\item{mirror}{CRAN mirror URL.}
 }
 \value{
 Invisibly returns the path to the binary output directory.

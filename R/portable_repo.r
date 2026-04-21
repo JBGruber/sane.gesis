@@ -8,8 +8,6 @@
 #'   Default is current directory.
 #' @param pkgs Packages to download.
 #' @param add_pkgs Additional packages to include.
-#' @param mirror Character string specifying the CRAN mirror to use.
-#'   Default is \code{"https://cloud.r-project.org"}.
 #' @param recursive Logical. Whether to search for packages in a path recursivly.
 #' @param platforms Character string specifying the package platforms. See
 #'   [pkgdepends::current_r_platform] for options.
@@ -92,7 +90,7 @@ plan_portable_repo <- function(
     cli::cli_process_done()
   }
   if (write_requirements == "ask") {
-    write_requirements <- askYesNo(
+    write_requirements <- utils::askYesNo(
       "Do you want to export a requirements.txt file?"
     )
   }
@@ -110,7 +108,6 @@ build_portable_repo <- function(
   pkgs,
   platforms = "windows",
   r_version = "4.3.2",
-  mirror = "https://cloud.r-project.org",
   out_file = "portable_repo.zip",
   verbose = TRUE
 ) {
@@ -129,7 +126,6 @@ build_portable_repo <- function(
       cache_dir = pth,
       platforms = platforms,
       `r-versions` = r_version,
-      cran_mirror = mirror,
       dependencies = c("Imports", "Depends", "LinkingTo", "Suggests")
     )
   )
@@ -169,8 +165,7 @@ pkg_download <- function(pkgs, config) {
     pkgs_built <- pkg_builder(
       pkgs2build,
       pth = config$cache_dir,
-      r_version = config$`r-versions`,
-      mirror = config$cran_mirror
+      r_version = config$`r-versions`
     )
     pkgs <- solution$ref[solution$status == "OK"]
     config$dependencies <- FALSE

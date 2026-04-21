@@ -7,6 +7,9 @@
 #'   portable package repository zip file. Default is \code{"S:/software/portable_repo.zip"}.
 #' @param pkgs Character vector of packages to install (caution: the function does
 #'   not check dependencies).
+#' @param lib Character string specifying the library directory where packages
+#'   should be installed. Defaults to \code{NULL}, which uses the path from the
+#'   \code{R_LIBS_USER} environment variable.
 #' @param verbose Logical indicating whether to display installation progress.
 #'   Default is \code{TRUE}.
 #'

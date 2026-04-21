@@ -6,14 +6,12 @@
 #'   `pth/bin/windows/contrib/<r_minor>/`.
 #' @param r_version R version string, e.g. `"4.3.2"`. Used to select the
 #'   correct win-builder endpoint and output directory.
-#' @param mirror CRAN mirror URL.
 #' @return Invisibly returns the path to the binary output directory.
 #' @export
 pkg_builder <- function(
   pkgs,
   pth,
-  r_version = "4.3.2",
-  mirror = "https://cloud.r-project.org"
+  r_version = "4.3.2"
 ) {
   source_pth <- file.path(pth, "_source_cache")
   dir.create(source_pth, showWarnings = FALSE, recursive = TRUE)
@@ -24,7 +22,6 @@ pkg_builder <- function(
       cache_dir = source_pth,
       platforms = "source",
       `r-versions` = r_version,
-      cran_mirror = mirror,
       dependencies = FALSE
     )
   )
@@ -41,7 +38,6 @@ pkg_builder <- function(
         cache_dir = source_pth,
         platforms = "source",
         `r-versions` = r_version,
-        cran_mirror = mirror,
         dependencies = FALSE
       )
     )
@@ -93,7 +89,9 @@ pkg_needs_compilation <- function(tarball) {
 
   desc <- read.dcf(desc_file)
   # special case, not available for all OS
-  if (identical(as.character(try(desc[1L, "OS_type"], silent = TRUE)), "unix")) {
+  if (
+    identical(as.character(try(desc[1L, "OS_type"], silent = TRUE)), "unix")
+  ) {
     cli::cli_alert_danger(
       "{basename(tarball)} is a Unix-only package and cannot be included"
     )

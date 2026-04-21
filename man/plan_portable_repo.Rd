@@ -17,7 +17,6 @@ build_portable_repo(
   pkgs,
   platforms = "windows",
   r_version = "4.3.2",
-  mirror = "https://cloud.r-project.org",
   out_file = "portable_repo.zip",
   verbose = TRUE
 )
@@ -42,9 +41,6 @@ a txt file? Possible ansers: \code{TRUE}/\code{FALSE}/\code{"ask"}-`}
 
 \item{r_version}{Character string specifying the R version for binary packages.
 Default is \code{"4.3"}.}
-
-\item{mirror}{Character string specifying the CRAN mirror to use.
-Default is \code{"https://cloud.r-project.org"}.}
 
 \item{out_file}{Character string specifying the output zip file name.
 Default is \code{"portable_repo.zip"}.}

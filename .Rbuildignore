@@ -1,5 +1,7 @@
 ^LICENSE\.md$
 ^portable_repo.zip$
+^.claude$
+^requirements.txt$
 ^README\.Rmd$
 ^.*\.Rproj$
 ^\.Rproj\.user$
