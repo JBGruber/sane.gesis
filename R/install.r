@@ -10,6 +10,7 @@
 #' @param lib Character string specifying the library directory where packages
 #'   should be installed. Defaults to \code{NULL}, which uses the path from the
 #'   \code{R_LIBS_USER} environment variable.
+#' @param overwrite Overwrite existing packages.
 #' @param verbose Logical indicating whether to display installation progress.
 #'   Default is \code{TRUE}.
 #'
@@ -51,6 +52,7 @@ install_portable_repo <- function(
   portable_repo = "S:/software/portable_repo.zip",
   pkgs = NULL,
   lib = NULL,
+  overwrite = FALSE,
   verbose = TRUE
 ) {
   if (is.null(lib)) {
@@ -103,7 +105,7 @@ install_portable_repo <- function(
     # check which package is in the archive
     pkg <- utils::unzip(pkg_zip_path, list = TRUE)[1, 1]
     # check if package exists already
-    if (file.exists(file.path(libloc, pkg))) {
+    if (file.exists(file.path(libloc, pkg)) & !overwrite) {
       next
     }
     # then unpack to lib location

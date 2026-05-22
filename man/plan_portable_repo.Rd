@@ -37,7 +37,7 @@ a txt file? Possible ansers: \code{TRUE}/\code{FALSE}/\code{"ask"}-`}
 \item{pkgs}{Packages to download.}
 
 \item{platforms}{Character string specifying the package platforms. See
-\link[pkgdepends:default_platforms]{pkgdepends::current_r_platform} for options.}
+\link[pkgdepends:current_r_platform]{pkgdepends::current_r_platform} for options.}
 
 \item{r_version}{Character string specifying the R version for binary packages.
 Default is \code{"4.3"}.}

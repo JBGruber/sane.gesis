@@ -8,6 +8,7 @@ install_portable_repo(
   portable_repo = "S:/software/portable_repo.zip",
   pkgs = NULL,
   lib = NULL,
+  overwrite = FALSE,
   verbose = TRUE
 )
 }
@@ -21,6 +22,8 @@ not check dependencies).}
 \item{lib}{Character string specifying the library directory where packages
 should be installed. Defaults to \code{NULL}, which uses the path from the
 \code{R_LIBS_USER} environment variable.}
+
+\item{overwrite}{Overwrite existing packages.}
 
 \item{verbose}{Logical indicating whether to display installation progress.
 Default is \code{TRUE}.}

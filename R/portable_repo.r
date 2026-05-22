@@ -146,12 +146,12 @@ pkg_download <- function(pkgs, config) {
   # first collect source packages to make sure all dependencies are there
   source_config <- config
   source_config$platforms <- "source"
-  # then try to get all binaries
   all_pkgs <- pkgdepends::new_pkg_download_proposal(
     refs = pkgs,
-    config = config
+    config = source_config
   )
   all_pkgs$resolve()
+  # then try to get all binaries
   dl <- pkgdepends::new_pkg_download_proposal(
     refs = all_pkgs$get_resolution()$ref,
     config = config

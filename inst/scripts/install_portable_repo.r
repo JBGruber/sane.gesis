@@ -5,6 +5,7 @@ install_portable_repo <- function(
   portable_repo = "S:/software/portable_repo.zip",
   pkgs = NULL,
   lib = NULL,
+  overwrite = FALSE,
   verbose = TRUE
 ) {
   if (is.null(lib)) {
@@ -15,7 +16,11 @@ install_portable_repo <- function(
   if (!dir.exists(libloc)) {
     .libPaths(new = libloc)
   }
-  r_version <- paste(R.version$major, strsplit(R.version$minor, "\\.")[[1]][1], sep = ".")
+  r_version <- paste(
+    R.version$major,
+    strsplit(R.version$minor, "\\.")[[1]][1],
+    sep = "."
+  )
   contrib_path <- file.path("bin/windows/contrib", r_version)
   zip_contents <- utils::unzip(portable_repo, list = TRUE)
 
@@ -53,7 +58,7 @@ install_portable_repo <- function(
     # check which package is in the archive
     pkg <- utils::unzip(pkg_zip_path, list = TRUE)[1, 1]
     # check if package exists already
-    if (file.exists(file.path(libloc, pkg))) {
+    if (file.exists(file.path(libloc, pkg)) & !overwrite) {
       next
     }
     # then unpack to lib location
