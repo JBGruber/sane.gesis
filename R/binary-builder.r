@@ -4,14 +4,14 @@
 #'   `pkgdepends`.
 #' @param pth Path to the portable repo root. Binaries are placed under
 #'   `pth/bin/windows/contrib/<r_minor>/`.
-#' @param r_version R version string, e.g. `"4.3.2"`. Used to select the
+#' @param r_version R version string, e.g. `"4.5.3"`. Used to select the
 #'   correct win-builder endpoint and output directory.
 #' @return Invisibly returns the path to the binary output directory.
 #' @export
 pkg_builder <- function(
   pkgs,
   pth,
-  r_version = "4.3.2"
+  r_version = "4.5.3"
 ) {
   source_pth <- file.path(pth, "_source_cache")
   dir.create(source_pth, showWarnings = FALSE, recursive = TRUE)

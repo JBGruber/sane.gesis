@@ -4,7 +4,7 @@
 \alias{pkg_builder}
 \title{Build or obtain Windows binaries for packages missing from CRAN}
 \usage{
-pkg_builder(pkgs, pth, r_version = "4.3.2")
+pkg_builder(pkgs, pth, r_version = "4.5.3")
 }
 \arguments{
 \item{pkgs}{Character vector of package names or refs understood by
@@ -13,7 +13,7 @@ pkg_builder(pkgs, pth, r_version = "4.3.2")
 \item{pth}{Path to the portable repo root. Binaries are placed under
 \verb{pth/bin/windows/contrib/<r_minor>/}.}
 
-\item{r_version}{R version string, e.g. \code{"4.3.2"}. Used to select the
+\item{r_version}{R version string, e.g. \code{"4.5.3"}. Used to select the
 correct win-builder endpoint and output directory.}
 }
 \value{

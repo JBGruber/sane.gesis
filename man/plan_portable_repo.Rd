@@ -16,7 +16,7 @@ plan_portable_repo(
 build_portable_repo(
   pkgs,
   platforms = "windows",
-  r_version = "4.3.2",
+  r_version = "4.5.3",
   out_file = "portable_repo.zip",
   verbose = TRUE
 )
