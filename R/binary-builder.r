@@ -6,12 +6,17 @@
 #'   `pth/bin/windows/contrib/<r_minor>/`.
 #' @param r_version R version string, e.g. `"4.5.3"`. Used to select the
 #'   correct win-builder endpoint and output directory.
-#' @return Invisibly returns the path to the binary output directory.
+#' @param platform Target platform the binaries are built for (a `pkgdepends`
+#'   platform name, e.g. `"windows"`). Packages that need compilation can only
+#'   be built when the current machine runs this same OS; otherwise they are
+#'   skipped with a warning.
+#' @return Invisibly returns the number of binaries that were built.
 #' @export
 pkg_builder <- function(
   pkgs,
   pth,
-  r_version = "4.5.3"
+  r_version = "4.5.3",
+  platform = "windows"
 ) {
   source_pth <- file.path(pth, "_source_cache")
   dir.create(source_pth, showWarnings = FALSE, recursive = TRUE)
@@ -56,25 +61,61 @@ pkg_builder <- function(
   r_minor <- paste(numeric_version(r_version)[1L, 1:2], collapse = ".")
   bin_dir <- file.path(pth, "bin", "windows", "contrib", r_minor)
   dir.create(bin_dir, showWarnings = FALSE, recursive = TRUE)
+  # When the current machine runs the target OS, it has the toolchain to
+  # compile packages locally; otherwise compiled packages must be skipped.
+  can_compile <- host_matches_platform(platform)
   pkg_out <- 0
   for (f in source_files) {
-    if (!pkg_needs_compilation(f)) {
-      cli::cli_progress_step(
-        msg = "Building Windows binary for {basename(f)}",
-        msg_done = "Built Windows binary for {basename(f)}"
+    info <- pkg_desc_info(f)
+    if (isTRUE(info$unix_only) && !identical(platform, "linux")) {
+      cli::cli_alert_danger(
+        "{basename(f)} is a Unix-only package and cannot be included"
       )
-      build_windows_binary(f, bin_dir)
-      pkg_out <- pkg_out + 1
+      next
     }
+    if (info$needs_compilation && !can_compile) {
+      cli::cli_alert_danger(
+        "{basename(f)} requires compilation, which can only be done on a {platform} machine. This package was skipped."
+      )
+      next
+    }
+    cli::cli_progress_step(
+      msg = "Building Windows binary for {basename(f)}",
+      msg_done = "Built Windows binary for {basename(f)}"
+    )
+    build_windows_binary(f, bin_dir)
+    pkg_out <- pkg_out + 1
   }
 
   invisible(pkg_out)
 }
 
 
-# Check whether a source tarball declares NeedsCompilation: yes.
-# Extracts only DESCRIPTION to a temp dir and reads it.
-pkg_needs_compilation <- function(tarball) {
+# Does the current machine run the target platform's OS? Only then can it
+# natively compile packages for that platform.
+host_matches_platform <- function(platform) {
+  host <- switch(
+    Sys.info()[["sysname"]],
+    Windows = "windows",
+    Darwin = "macos",
+    Linux = "linux",
+    tolower(Sys.info()[["sysname"]])
+  )
+  platform <- switch(
+    tolower(platform),
+    mac = "macos",
+    osx = "macos",
+    macosx = "macos",
+    tolower(platform)
+  )
+  identical(host, platform)
+}
+
+
+# Read the DESCRIPTION of a source tarball and report whether it needs
+# compilation and whether it is Unix-only. Extracts only DESCRIPTION to a
+# temp dir and reads it. If unsure, assumes compilation is needed.
+pkg_desc_info <- function(tarball) {
   tmp <- tempfile()
   dir.create(tmp)
   on.exit(unlink(tmp, recursive = TRUE))
@@ -84,26 +125,18 @@ pkg_needs_compilation <- function(tarball) {
   desc_file <- file.path(pkg_dir, "DESCRIPTION")
 
   if (!file.exists(desc_file)) {
-    return(TRUE)
+    return(list(needs_compilation = TRUE, unix_only = FALSE))
   } # assume yes if unsure
 
   desc <- read.dcf(desc_file)
-  # special case, not available for all OS
-  if (
-    identical(as.character(try(desc[1L, "OS_type"], silent = TRUE)), "unix")
-  ) {
-    cli::cli_alert_danger(
-      "{basename(tarball)} is a Unix-only package and cannot be included"
-    )
-    return(TRUE)
-  }
-  if (identical(as.character(desc[1L, "NeedsCompilation"]), "yes")) {
-    cli::cli_alert_danger(
-      "{basename(tarball)} requires compilation. This cannot be done yet"
-    )
-    return(TRUE)
-  }
-  return(FALSE)
+  os_type <- as.character(try(desc[1L, "OS_type"], silent = TRUE))
+  list(
+    needs_compilation = identical(
+      as.character(desc[1L, "NeedsCompilation"]),
+      "yes"
+    ),
+    unix_only = identical(os_type, "unix")
+  )
 }
 
 
