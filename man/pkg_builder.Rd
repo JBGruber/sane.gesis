@@ -4,7 +4,7 @@
 \alias{pkg_builder}
 \title{Build or obtain Windows binaries for packages missing from CRAN}
 \usage{
-pkg_builder(pkgs, pth, r_version = "4.5.3")
+pkg_builder(pkgs, pth, r_version = "4.5.3", platform = "windows")
 }
 \arguments{
 \item{pkgs}{Character vector of package names or refs understood by
@@ -15,9 +15,14 @@ pkg_builder(pkgs, pth, r_version = "4.5.3")
 
 \item{r_version}{R version string, e.g. \code{"4.5.3"}. Used to select the
 correct win-builder endpoint and output directory.}
+
+\item{platform}{Target platform the binaries are built for (a \code{pkgdepends}
+platform name, e.g. \code{"windows"}). Packages that need compilation can only
+be built when the current machine runs this same OS; otherwise they are
+skipped with a warning.}
 }
 \value{
-Invisibly returns the path to the binary output directory.
+Invisibly returns the number of binaries that were built.
 }
 \description{
 Build or obtain Windows binaries for packages missing from CRAN

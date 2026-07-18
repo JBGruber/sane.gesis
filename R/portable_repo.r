@@ -165,7 +165,8 @@ pkg_download <- function(pkgs, config) {
     pkgs_built <- pkg_builder(
       pkgs2build,
       pth = config$cache_dir,
-      r_version = config$`r-versions`
+      r_version = config$`r-versions`,
+      platform = config$platforms
     )
     pkgs <- solution$ref[solution$status == "OK"]
     config$dependencies <- FALSE
